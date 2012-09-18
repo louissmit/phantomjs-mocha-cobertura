@@ -131,24 +131,20 @@ var Coverage = {
         this.options = this.getOptions(a);
         phantom.injectJs(this.options.config);
         switch (a[0]) {
-            case "prepare":
-                this.prepare();
-                break;
             case "run":
                 this.run()
         }
     },
 
     run: function () {
-
         this.page = new WebPage;
         this.page.onConsoleMessage = function (a) {
             console.log(a)
         };
-        this.page.open(Config.target + "/bin/testrunner.html", function (a) {
+        this.page.open(Config.target + "/test/index.html", function (a) {
             if (a !== "success") throw "Unable to access network";
             else waitFor(function () {
-                    return thisCoverage.isTestCompeted()
+                    return this.Coverage.isTestCompleted()
                 }, function () {
                     Coverage.createReports();
                     Coverage.fs.removeTree(Config.target);
@@ -163,7 +159,7 @@ var Coverage = {
         File.save(Config.output.junit, a);
         File.save(Config.output.cobertura, b)
     },
-    isTestCompeted: function () {
+    isTestCompleted: function () {
         return this.page.evaluate(function () {
             return document.testcompleted;
         })
