@@ -26,6 +26,6 @@ echo "running phantomjs..."
 phantomjs script.js run --config config.js
 
 echo "finished!"
-
+rm -r coverage-build
 exit
 
