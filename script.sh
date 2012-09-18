@@ -23,7 +23,7 @@ echo "copying test dir..."
 cp -r $1/../test coverage-build/test
 
 echo "running phantomjs..."
-phantomjs script.js run --config config.js
+phantomjs phantomjs-mocha-cobertura/script.js run --config phantomjs-mocha-cobertura/config.js
 
 echo "finished!"
 rm -r coverage-build
