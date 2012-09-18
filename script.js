@@ -122,30 +122,7 @@ var File = {
         return b
     }
 };
-var Template = {
-    fs: require("fs"),
-    get: function (a, b) {
-        var c = this.fs.read(a),
-            d;
-        for (d in b) c = c.replace("{{ " + d + " }}", b[d]);
-        return c
-    },
-    getScripts: function (a) {
-        var b = [],
-            c;
-        for (c in a) b.push("<script type='text/javascript' src='" + a[c] + "'><\/script>");
-        return b.join("\n")
-    },
-    getScriptsFromDirectory: function (a, b) {
-        var c = File.getJavascriptsFromDirectory(a);
-        if (b) {
-            var d = [],
-                e;
-            for (e in c) d.push(c[e].split(a + "/", 2).join(""));
-            return this.getScripts(d)
-        } else return this.getScripts(c)
-    }
-};
+
 var Coverage = {
     fs: require("fs"),
     options: {},
@@ -161,27 +138,9 @@ var Coverage = {
                 this.run()
         }
     },
-    prepare: function () {
-        this.fs.removeTree(Config.target);
-        this.fs.makeTree(Config.target + "/src");
-        this.fs.makeTree(Config.target + "/bin");
-        this.fs.copyTree(Config.src.application, Config.target + "/src");
-        var a = Template.get(Config.templates + "/testrunner.html", {
-            libScripts: Template.getScriptsFromDirectory(Config.src.libraries,
-                true),
-            sourceScripts: Template.getScriptsFromDirectory(Config.src.application, true),
-            scripts: Template.getScriptsFromDirectory(Config.src.tests, true)
-        });
-        File.save(Config.target + "/src/testrunner.html", a);
-        phantom.exit(0)
-    },
+
     run: function () {
-        this.fs.copyTree(Config.src.libraries, Config.target + "/bin");
-        this.fs.copyTree(Config.src.tests, Config.target + "/bin");
-        this.fs.copy(Config.src.qunit + "/qunit.css", Config.target + "/bin/qunit.css");
-        this.fs.copy(Config.src.qunit + "/qunit.js", Config.target + "/bin/qunit.js");
-        this.fs.copy(Config.src.qunit + "/qunit-coverage.js", Config.target + "/bin/qunit-coverage.js");
-        Config.src.mockups && this.fs.exists(Config.src.mockups) && this.fs.copyTree(Config.src.mockups, Config.target + "/bin");
+
         this.page = new WebPage;
         this.page.onConsoleMessage = function (a) {
             console.log(a)
