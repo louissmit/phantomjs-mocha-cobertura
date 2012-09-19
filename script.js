@@ -10,7 +10,7 @@ var Cobertura = {
                 packageMap: {}
             };
             if (_$jscoverage) for (var b in _$jscoverage) if (_$jscoverage.hasOwnProperty(b)) {
-                var c = _$jscoverage[b],
+				var c = _$jscoverage[b],
                     d;
                 d = b.split("/");
                 d.pop();
@@ -41,8 +41,8 @@ var Cobertura = {
                 }
             }
             return a
-        }),
-            b = [];
+        });
+        var b = [];
         b.push("<?xml version='1.0' encoding='UTF-8'?>");
         b.push("<!DOCTYPE coverage SYSTEM 'http://cobertura.sourceforge.net/xml/coverage-03.dtd'>");
         b.push("<coverage line-rate='" + a.testedLines / a.testableLines + "' branch-rate='0' version='3.5.1' timestamp='" + (new Date).getTime().toString() + "'>");
@@ -51,8 +51,9 @@ var Cobertura = {
         for (var c in a.packageMap) {
             b.push("\t\t<package name='" + c + "' line-rate='" + a.packageMap[c].testedLines / a.packageMap[c].testableLines + "' branch-rate='0' complexity='0'>");
             b.push("\t\t\t<classes>");
-            for (var d in a.packageMap[c].classMap) {
-                b.push("\t\t\t\t<class name='" + d + "' filename='" + Config.src.application + "/" + a.packageMap[c].classMap[d].file + "' line-rate='" + a.packageMap[c].classMap[d].testedLines / a.packageMap[c].classMap[d].testableLines + "' branch-rate='0'>");
+			for (var d in a.packageMap[c].classMap) {
+				//TODO: "filename= app" should not be hardcoded!!??
+                b.push("\t\t\t\t<class name='" + d + "' filename='" + "app" + "/" + a.packageMap[c].classMap[d].file + "' line-rate='" + a.packageMap[c].classMap[d].testedLines / a.packageMap[c].classMap[d].testableLines + "' branch-rate='0'>");
                 b.push("\t\t\t\t\t<lines>");
                 for (var e in a.packageMap[c].classMap[d].coverage) b.push("\t\t\t\t\t\t<line number='" + (parseInt(e, 10) + 1).toString() + "' hits='" + a.packageMap[c].classMap[d].coverage[e].hits.toString() + "' branch='false' />");
                 b.push("\t\t\t\t\t</lines>");
@@ -61,6 +62,7 @@ var Cobertura = {
             b.push("\t\t\t</classes>");
             b.push("\t\t</package>")
         }
+
         b.push("\t</packages>");
         b.push("</coverage>");
         console.log("Coverage measured (" + Math.round(a.testedLines / a.testableLines * 100) + "%):");
@@ -73,8 +75,8 @@ var JUnit = {
     generateReport: function (a) {
         var a = a.evaluate(function () {
             return getReport()
-        }),
-            b = [];
+        });
+        var b = [];
         b.push("<?xml version='1.0' encoding='UTF-8'?>");
         b.push("<testsuite tests='" + a.count + "' failures='" + a.failures + "' disabled='0' errors='0' time='" + a.time / 1E3 + "' name='tests'>");
         for (var c in a.modules) {
@@ -131,39 +133,35 @@ var Coverage = {
         this.options = this.getOptions(a);
         phantom.injectJs(this.options.config);
         switch (a[0]) {
-            case "prepare":
-                this.prepare();
-                break;
             case "run":
                 this.run()
         }
     },
 
     run: function () {
-
         this.page = new WebPage;
         this.page.onConsoleMessage = function (a) {
             console.log(a)
         };
-        this.page.open(Config.target + "/bin/testrunner.html", function (a) {
+        this.page.open(Config.target + "/test/index.html", function (a) {
             if (a !== "success") throw "Unable to access network";
             else waitFor(function () {
-                    return thisCoverage.isTestCompeted()
+                    return this.Coverage.isTestCompleted()
                 }, function () {
                     Coverage.createReports();
-                    Coverage.fs.removeTree(Config.target);
                     phantom.exit(0)
                 },
                 6E4)
         })
     },
     createReports: function () {
-        var a = JUnit.generateReport(this.page, this.options),
-            b = Cobertura.generateReport(this.page, this.options);
-        File.save(Config.output.junit, a);
+		console.log("ready to start generating reports")
+		//var a = JUnit.generateReport(this.page, this.options);
+        var b = Cobertura.generateReport(this.page, this.options);
+        //File.save(Config.output.junit, a);
         File.save(Config.output.cobertura, b)
     },
-    isTestCompeted: function () {
+    isTestCompleted: function () {
         return this.page.evaluate(function () {
             return document.testcompleted;
         })
