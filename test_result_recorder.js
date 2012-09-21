@@ -71,14 +71,6 @@ var Cobertura = {
         return b.join("\n")
     }
 };
-var JUnit = {
-    generateReport: function (a) {
-        var a = a.evaluate(function () {
-            return this;
-        });
-	return a;
-    }
-};
 
 function waitFor(a, b, c) {
     var d = c ? c : 3001,
