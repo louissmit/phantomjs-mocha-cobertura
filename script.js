@@ -74,25 +74,9 @@ var Cobertura = {
 var JUnit = {
     generateReport: function (a) {
         var a = a.evaluate(function () {
-            return getReport()
+            return this;
         });
-        var b = [];
-        b.push("<?xml version='1.0' encoding='UTF-8'?>");
-        b.push("<testsuite tests='" + a.count + "' failures='" + a.failures + "' disabled='0' errors='0' time='" + a.time / 1E3 + "' name='tests'>");
-        for (var c in a.modules) {
-            var d = a.modules[c];
-            b.push("\t<testsuite tests='" + d.count + "' failures='" + d.failures + "' disabled='0' errors='0' time='" + d.time / 1E3 + "' name='" + c + "'>");
-            for (var e in d.tests) {
-                var f = d.tests[e];
-                b.push("\t\t<testcase name='" + e + "' status='" + (f.success ? "pass" : "fail") + "' time='" + f.time / 1E3 + "' classname='" + c + "' />")
-            }
-            b.push("\t</testsuite>")
-        }
-        b.push("</testsuite>");
-        console.log("Tests completed (" + a.count + "): " + a.time + "ms.");
-        console.log("\t" + a.passed + " passed");
-        console.log("\t" + a.failures + " failed");
-        return b.join("\n")
+	return a;
     }
 };
 
@@ -140,8 +124,10 @@ var Coverage = {
 
     run: function () {
         this.page = new WebPage;
+	this.junit = "";
+	var self = this;
         this.page.onConsoleMessage = function (a) {
-            console.log(a)
+            self.junit = self.junit + a;
         };
         this.page.open(Config.target + "/test/index.html", function (a) {
             if (a !== "success") throw "Unable to access network";
@@ -155,10 +141,10 @@ var Coverage = {
         })
     },
     createReports: function () {
-		console.log("ready to start generating reports")
-		//var a = JUnit.generateReport(this.page, this.options);
+	console.log("ready to start generating reports")
+	var a = this.junit;
         var b = Cobertura.generateReport(this.page, this.options);
-        //File.save(Config.output.junit, a);
+        File.save(Config.output.junit, a);
         File.save(Config.output.cobertura, b)
     },
     isTestCompleted: function () {
