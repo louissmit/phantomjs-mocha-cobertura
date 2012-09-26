@@ -121,7 +121,7 @@ var Coverage = {
         this.page.onConsoleMessage = function (a) {
             self.junit = self.junit + a;
         };
-        this.page.open(Config.target + "/app/scripts/test/index.html", function (a) {
+        this.page.open(Config.target + "/app/scripts/test/xunit.html", function (a) {
             if (a !== "success") throw "Unable to access network";
             else waitFor(function () {
                     return this.Coverage.isTestCompleted()
