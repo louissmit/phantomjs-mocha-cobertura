@@ -15,7 +15,7 @@ mkdir coverage-build
 mkdir coverage-build/client
 
 echo "running jscoverage..."
-jscoverage --no-instrument=scripts/js/vendor --no-instrument=scripts/js/test $1 coverage-build/client
+jscoverage --no-instrument=public/js/vendor --no-instrument=public/js/test --no-instrument=coffee $1 coverage-build/client
 
 echo "running phantomjs..."
 phantomjs phantomjs-mocha-cobertura/test_result_recorder.js run --config phantomjs-mocha-cobertura/config.js
