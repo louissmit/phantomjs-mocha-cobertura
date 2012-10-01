@@ -52,8 +52,8 @@ var Cobertura = {
             b.push("\t\t<package name='" + c + "' line-rate='" + a.packageMap[c].testedLines / a.packageMap[c].testableLines + "' branch-rate='0' complexity='0'>");
             b.push("\t\t\t<classes>");
 			for (var d in a.packageMap[c].classMap) {
-				//TODO: "filename= app" should not be hardcoded!!??
-                b.push("\t\t\t\t<class name='" + d + "' filename='" + "app" + "/" + a.packageMap[c].classMap[d].file + "' line-rate='" + a.packageMap[c].classMap[d].testedLines / a.packageMap[c].classMap[d].testableLines + "' branch-rate='0'>");
+				//TODO: "filename= client" should not be hardcoded!!??
+                b.push("\t\t\t\t<class name='" + d + "' filename='" + "client" + "/" + a.packageMap[c].classMap[d].file + "' line-rate='" + a.packageMap[c].classMap[d].testedLines / a.packageMap[c].classMap[d].testableLines + "' branch-rate='0'>");
                 b.push("\t\t\t\t\t<lines>");
                 for (var e in a.packageMap[c].classMap[d].coverage) b.push("\t\t\t\t\t\t<line number='" + (parseInt(e, 10) + 1).toString() + "' hits='" + a.packageMap[c].classMap[d].coverage[e].hits.toString() + "' branch='false' />");
                 b.push("\t\t\t\t\t</lines>");
@@ -121,7 +121,7 @@ var Coverage = {
         this.page.onConsoleMessage = function (a) {
             self.junit = self.junit + a;
         };
-        this.page.open(Config.target + "/app/scripts/test/xunit.html", function (a) {
+        this.page.open(Config.target + "/client/scripts/test/xunit.html", function (a) {
             if (a !== "success") throw "Unable to access network";
             else waitFor(function () {
                     return this.Coverage.isTestCompleted()
